@@ -59,8 +59,8 @@ float *forward_Price(float S0, float u, float d, int vDate){
 
         for(int i = 0; i < pow(2, next_d - 1); i++){
             // Next date will split into two states.
-            next_S[2*i] = u * cur_S[i];
-            next_S[2*i + 1] = d * cur_S[i];
+            next_S[2 * i] = u * cur_S[i];
+            next_S[2 * i + 1] = d * cur_S[i];
         }
 
         free(cur_S);    // Free memory space.

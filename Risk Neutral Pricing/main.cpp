@@ -42,6 +42,7 @@ int main()
 
     cout << "=====Backward V=====" << endl;
     float V0 = backward_Payoff(last_S, p, r, K, vDate);
+    cout << "V0=" << V0 << endl;
 
     free(last_S);   // Free memory space.
     return 0;
@@ -51,26 +52,19 @@ float *forward_Price(float S0, float u, float d, int vDate){
     // Apply a one space array for initial date.
     float *cur_S = (float*)malloc(sizeof(float));
     cur_S[0] = S0;
-    cout << "S0> " << S0 << endl;
 
     for(int next_d = 1; next_d <= vDate; next_d++){
         // Apply a 2^next_d spaces array for next date.
         float *next_S = (float*)malloc(sizeof(float) * pow(2, next_d));
+
         for(int i = 0; i < pow(2, next_d - 1); i++){
             // Next date will split into two states.
             next_S[2*i] = u * cur_S[i];
             next_S[2*i + 1] = d * cur_S[i];
         }
 
-        // Display S array.
-        cout << 'S' << next_d << "> ";
-        for(int i = 0; i < pow(2, next_d); i++){
-            cout << next_S[i] << ' ';
-        }
-        cout << endl;
-
         free(cur_S);    // Free memory space.
-        cur_S = next_S;
+        cur_S = next_S; // Point to the next date.
     }
 
     return cur_S;
@@ -80,34 +74,26 @@ float backward_Payoff(float *price, float p, float r, float K, int vDate){
     float q = 1.0 - p;  // Down's probability
     // Apply a 2^vDate spaces array for last date.
     float *cur_V = (float*)malloc(sizeof(float) * pow(2, vDate));
-    cout << 'V' << vDate << "> ";
 
     for(int i = 0; i < pow(2, vDate); i++){
-        float Vn = price[i] - K;  // Vn = (Sn - K)
+        float Vn = price[i] - K;  // Vn = (Sn - K).
         if(Vn < 0) Vn = 0;
         cur_V[i] = Vn;
-        cout << cur_V[i] << ' ';
     }
-    cout << endl;
-    vDate--;
 
-    while(vDate >= 0){
-        // Apply number of spaces array for previous date.
-        float *pre_V = (float*)malloc(sizeof(float) * pow(2, vDate));
-        cout << 'V' << vDate << "> ";
+    for(int pre_d = vDate - 1; pre_d >= 0; pre_d--){
+        // Apply a 2^pre_d spaces array for previous date.
+        float *pre_V = (float*)malloc(sizeof(float) * pow(2, pre_d));
 
-        for(int i = 0; i < pow(2, vDate); i++){
+        for(int i = 0; i < pow(2, pre_d); i++){
             // Calculate previous V.
             float temp = (p * cur_V[2 * i] + q * cur_V[2 * i + 1]) / (1 + r);
             if(temp < 0) temp = 0;
             pre_V[i] = temp;
-            cout << pre_V[i] << ' ';
         }
-        cout << endl;
 
         free(cur_V);    // Free memory space.
-        cur_V = pre_V;
-        vDate--;
+        cur_V = pre_V;  // Point to the previous date.
     }
 
     float V0 = cur_V[0];

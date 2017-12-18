@@ -48,6 +48,14 @@ int main()
     return 0;
 }
 
+/**
+  * @brief  Calculate the price at valid date.
+  * @param  S0: Starting price.
+  * @param  u: Up pricing rate.
+  * @param  d: Down pricing rate.
+  * @param  vDate: Valid date.
+  * @retval Pointer(array) of the last S.
+  */
 float *forward_Price(float S0, float u, float d, int vDate){
     // Apply a one space array for initial date.
     float *cur_S = (float*)malloc(sizeof(float));
@@ -70,6 +78,15 @@ float *forward_Price(float S0, float u, float d, int vDate){
     return cur_S;
 }
 
+/**
+  * @brief  Calculate the payoff of the option.
+  * @param  price: Pointer(array) to price on valid date.
+  * @param  p: Up's probability.
+  * @param  r: Interest rate.
+  * @param  K: Expected price.
+  * @param  vDate: Valid date.
+  * @retval V0.
+  */
 float backward_Payoff(float *price, float p, float r, float K, int vDate){
     float q = 1.0 - p;  // Down's probability
     // Apply a 2^vDate spaces array for last date.

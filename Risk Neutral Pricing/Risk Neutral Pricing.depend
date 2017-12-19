@@ -1,0 +1,6 @@
+# depslib dependency file v1.0
+1513608416 source:i:\risk neutral pricing\main.cpp
+	<iostream>
+	<cstdlib>
+	<cmath>
+

@@ -57,25 +57,14 @@ int main()
   * @retval Pointer(array) of the last S.
   */
 float *forward_Price(float S0, float u, float d, int vDate){
-    // Apply a one space array for initial date.
-    float *cur_S = (float*)malloc(sizeof(float));
-    cur_S[0] = S0;
+    // Apply a vDate+1 spaces array for last date.
+    float *last_S = (float*)malloc(sizeof(float) * (vDate + 1));
 
-    for(int next_d = 1; next_d <= vDate; next_d++){
-        // Apply a 2^next_d spaces array for next date.
-        float *next_S = (float*)malloc(sizeof(float) * pow(2, next_d));
-
-        for(int i = 0; i < pow(2, next_d - 1); i++){
-            // Next date will split into two states.
-            next_S[2 * i] = u * cur_S[i];
-            next_S[2 * i + 1] = d * cur_S[i];
-        }
-
-        free(cur_S);    // Free memory space.
-        cur_S = next_S; // Point to the next date.
+    for(int i = 0; i < vDate + 1; i++){
+        last_S[i] = S0 * pow(u, i) * pow(d, vDate - i);
     }
 
-    return cur_S;
+    return last_S;
 }
 
 /**
@@ -89,22 +78,22 @@ float *forward_Price(float S0, float u, float d, int vDate){
   */
 float backward_Payoff(float *price, float p, float r, float K, int vDate){
     float q = 1.0 - p;  // Down's probability
-    // Apply a 2^vDate spaces array for last date.
-    float *cur_V = (float*)malloc(sizeof(float) * pow(2, vDate));
+    // Apply a vDate+1 spaces array for last date.
+    float *cur_V = (float*)malloc(sizeof(float) * (vDate + 1));
 
-    for(int i = 0; i < pow(2, vDate); i++){
+    for(int i = 0; i < vDate + 1; i++){
         float Vn = price[i] - K;  // Vn = (Sn - K).
         if(Vn < 0) Vn = 0;
         cur_V[i] = Vn;
     }
 
-    for(int pre_d = vDate - 1; pre_d >= 0; pre_d--){
-        // Apply a 2^pre_d spaces array for previous date.
-        float *pre_V = (float*)malloc(sizeof(float) * pow(2, pre_d));
+    for(int pre_d = vDate; pre_d >= 1; pre_d--){
+        // Apply a pre_d spaces array for previous date.
+        float *pre_V = (float*)malloc(sizeof(float) * pre_d);
 
-        for(int i = 0; i < pow(2, pre_d); i++){
+        for(int i = 0; i < pre_d; i++){
             // Calculate previous V.
-            float temp = (p * cur_V[2 * i] + q * cur_V[2 * i + 1]) / (1 + r);
+            float temp = (p * cur_V[i] + q * cur_V[i + 1]) / (1 + r);
             if(temp < 0) temp = 0;
             pre_V[i] = temp;
         }

@@ -23,6 +23,7 @@ double backward_Payoff(double *price, float p, float r, float K, int vDate);
 
 int main()
 {
+
     float p = 0.5; // Up's Probability
     float S0 = 4;   // Starting price
     float u = 2, d = 0.5; // Up/Down pricing rate
@@ -31,26 +32,16 @@ int main()
     int vDate = 3;  // Valid date
 
     cout << "=====This is Risk Neutral Pricing Model=====" << endl;
-    cout << "p:" << p << endl;
-    cout << "q:" << 1.0 - p << endl;
-    cout << "S0:" << S0 << endl;
-    cout << "u:" << u << endl;
-    cout << "d:" << d << endl;
-    cout << "r:" << r << endl;
-    cout << "K:" << K << endl;
-    cout << "Valid date:" << vDate << endl;
-    /*
     cout << "Please enter the following parameter:" << endl;
-    cout << "p:"; cin >> p;
-    q = 1.0 - p;
-    cout << "q:" << q << endl;
-    cout << "S0:"; cin >> S0;
-    cout << "u:"; cin >> u;
-    cout << "d:"; cin >> d;
-    cout << "r:"; cin >> r;
-    cout << "K:"; cin >> K;
+    cout << "Up's Probability p:"; cin >> p;
+    cout << "Down's Probability q:" << 1.0 - p << endl;
+    cout << "Starting price S0:"; cin >> S0;
+    cout << "Up pricing rate u:"; cin >> u;
+    cout << "Down pricing rate d:"; cin >> d;
+    cout << "Interest Rate r:"; cin >> r;
+    cout << "Expected price K:"; cin >> K;
     cout << "Valid date:"; cin >> vDate;
-    */
+
     cout << "=====Forward S=====" << endl;
     double *last_S = forward_Price(S0, u, d, vDate);
 
@@ -59,6 +50,7 @@ int main()
     cout << "V0=" << V0 << endl;
 
     free(last_S);
+    system("pause");
     return 0;
 }
 

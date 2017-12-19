@@ -44,7 +44,7 @@ int main()
 
     cout << "=====Backward V=====" << endl;
     float V0 = backward_Payoff(p, r, K, vDate);
-    //cout << "V0=" << V0 << endl;
+    cout << "V0=" << V0 << endl;
 
     return 0;
 }
@@ -58,12 +58,9 @@ int main()
   * @retval None.
   */
 void forward_Price(float S0, float u, float d, int vDate){
-    cout << 'S' << vDate << "> ";
     for(int i = 0; i < vDate + 1; i++){
         last_S[i] = S0 * pow(d, i) * pow(u, vDate - i);
-        cout << last_S[i] << '\t';
     }
-    cout << endl;
 }
 
 /**
@@ -77,23 +74,21 @@ void forward_Price(float S0, float u, float d, int vDate){
 float backward_Payoff(float p, float r, float K, int vDate){
     float q = 1.0 - p;  // Down's probability
     float cur_V[MAXSIZE];
-    cout << 'V' << vDate << "> ";
+
     for(int i = 0; i < vDate + 1; i++){
         float Vn = last_S[i] - K;  // Vn = (Sn - K).
         if(Vn < 0) Vn = 0;
         cur_V[i] = Vn;
-        cout << cur_V[i] << '\t';
     }
+
     for(int pre_d = vDate; pre_d >= 1; pre_d--){
-        cout << endl << 'V' << pre_d - 1 << "> ";
         for(int i = 0; i < pre_d; i++){
             // Calculate previous V.
             float temp = (p * cur_V[i] + q * cur_V[i + 1]) / (1 + r);
             if(temp < 0) temp = 0;
             cur_V[i] = temp;
-            cout << cur_V[i] << '\t';
         }
     }
-    cout << endl;
+
     return cur_V[0];    // return V0.
 }

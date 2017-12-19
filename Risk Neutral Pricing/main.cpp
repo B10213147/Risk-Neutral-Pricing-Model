@@ -1,12 +1,14 @@
 #include <iostream>
-#include <cstdlib>
 #include <cmath>
+
+#define     MAXSIZE     100 + 1
 
 using namespace std;
 
-float *forward_Price(float S0, float u, float d, int vDate);
-float backward_Payoff(float *price, float p, float r, float K, int vDate);
+void forward_Price(float S0, float u, float d, int vDate);
+float backward_Payoff(float p, float r, float K, int vDate);
 
+float last_S[MAXSIZE];
 int main()
 {
     float p = 0.5; // Up's Probability
@@ -38,13 +40,12 @@ int main()
     cout << "Valid date:"; cin >> vDate;
     */
     cout << "=====Forward S=====" << endl;
-    float *last_S = forward_Price(S0, u, d, vDate); // last_S carries an array.
+    forward_Price(S0, u, d, vDate);
 
     cout << "=====Backward V=====" << endl;
-    float V0 = backward_Payoff(last_S, p, r, K, vDate);
-    cout << "V0=" << V0 << endl;
+    float V0 = backward_Payoff(p, r, K, vDate);
+    //cout << "V0=" << V0 << endl;
 
-    free(last_S);   // Free memory space.
     return 0;
 }
 
@@ -54,55 +55,45 @@ int main()
   * @param  u: Up pricing rate.
   * @param  d: Down pricing rate.
   * @param  vDate: Valid date.
-  * @retval Pointer(array) of the last S.
+  * @retval None.
   */
-float *forward_Price(float S0, float u, float d, int vDate){
-    // Apply a vDate+1 spaces array for last date.
-    float *last_S = (float*)malloc(sizeof(float) * (vDate + 1));
-
+void forward_Price(float S0, float u, float d, int vDate){
+    cout << 'S' << vDate << "> ";
     for(int i = 0; i < vDate + 1; i++){
-        last_S[i] = S0 * pow(u, i) * pow(d, vDate - i);
+        last_S[i] = S0 * pow(d, i) * pow(u, vDate - i);
+        cout << last_S[i] << '\t';
     }
-
-    return last_S;
+    cout << endl;
 }
 
 /**
   * @brief  Calculate the payoff of the option.
-  * @param  price: Pointer(array) to price on valid date.
   * @param  p: Up's probability.
   * @param  r: Interest rate.
   * @param  K: Expected price.
   * @param  vDate: Valid date.
   * @retval V0.
   */
-float backward_Payoff(float *price, float p, float r, float K, int vDate){
+float backward_Payoff(float p, float r, float K, int vDate){
     float q = 1.0 - p;  // Down's probability
-    // Apply a vDate+1 spaces array for last date.
-    float *cur_V = (float*)malloc(sizeof(float) * (vDate + 1));
-
+    float cur_V[MAXSIZE];
+    cout << 'V' << vDate << "> ";
     for(int i = 0; i < vDate + 1; i++){
-        float Vn = price[i] - K;  // Vn = (Sn - K).
+        float Vn = last_S[i] - K;  // Vn = (Sn - K).
         if(Vn < 0) Vn = 0;
         cur_V[i] = Vn;
+        cout << cur_V[i] << '\t';
     }
-
     for(int pre_d = vDate; pre_d >= 1; pre_d--){
-        // Apply a pre_d spaces array for previous date.
-        float *pre_V = (float*)malloc(sizeof(float) * pre_d);
-
+        cout << endl << 'V' << pre_d - 1 << "> ";
         for(int i = 0; i < pre_d; i++){
             // Calculate previous V.
             float temp = (p * cur_V[i] + q * cur_V[i + 1]) / (1 + r);
             if(temp < 0) temp = 0;
-            pre_V[i] = temp;
+            cur_V[i] = temp;
+            cout << cur_V[i] << '\t';
         }
-
-        free(cur_V);    // Free memory space.
-        cur_V = pre_V;  // Point to the previous date.
     }
-
-    float V0 = cur_V[0];
-    free(cur_V);    // Free memory space.
-    return V0;
+    cout << endl;
+    return cur_V[0];    // return V0.
 }

@@ -23,7 +23,6 @@ double backward_Payoff(double *price, float p, float r, float K, int vDate);
 
 int main()
 {
-
     float p = 0.5; // Up's Probability
     float S0 = 4;   // Starting price
     float u = 2, d = 0.5; // Up/Down pricing rate
@@ -31,7 +30,9 @@ int main()
     float K = 3;    // Expected price
     int vDate = 3;  // Valid date
 
-    cout << "=====This is Risk Neutral Pricing Model=====" << endl;
+    cout << "=====Risk Neutral Pricing Model V1.1=====" << endl;
+    cout << "=====Author: Harvard Tseng=====" << endl;
+
     cout << "Please enter the following parameter:" << endl;
     cout << "Up's Probability p:"; cin >> p;
     cout << "Down's Probability q:" << 1.0 - p << endl;
@@ -103,5 +104,7 @@ double backward_Payoff(double *price, float p, float r, float K, int vDate){
         }
     }
 
-    return cur_V[0];    // return V0.
+    double V0 = cur_V[0];
+    free(cur_V);    // Free memory space.
+    return V0;
 }
